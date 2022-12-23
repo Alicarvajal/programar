@@ -62,7 +62,8 @@ mapa.width = anchoDelMapa
 mapa.height = alturaQueBuscamos
 
 class Mokepon {
-    constructor(nombre, foto, vida, fotoMapa) {
+    constructor(nombre, foto, vida, fotoMapa, id = null) {
+        this.id = id
         this.nombre = nombre 
         this.foto = foto
         this.vida = vida 
@@ -93,62 +94,36 @@ let dragon = new Mokepon('dragon', './imagenes/dragon.jpg', 5, './imagenes/lobo.
 let tiburon = new Mokepon('tiburon', './imagenes/tiburon.jpg', 5, './imagenes/perro.jpg')
  
 let burro = new Mokepon('burro', './imagenes/burro.jpg', 5, './imagenes/conejo.jpg')
-
-let dragonEnemigo = new Mokepon('dragon', './imagenes/dragon.jpg', 5, './imagenes/lobo.png')
-
-let tiburonEnemigo = new Mokepon('tiburon', './imagenes/tiburon.jpg', 5, './imagenes/perro.jpg')
- 
-let burroEnemigo = new Mokepon('burro', './imagenes/burro.jpg', 5, './imagenes/conejo.jpg')
             
-dragon.ataques.push (
+const DRAGON_ATAQUES = [
     { nombre: '💧', id: 'boton-agua'},
     { nombre: '💧', id: 'boton-agua'},
     { nombre: '💧', id: 'boton-agua'},
     { nombre: '🔥', id: 'boton-fuego'},
     { nombre: '🌱', id: 'boton-tierra'},
-    
-)
+]
 
-dragonEnemigo.ataques.push (
-    { nombre: '💧', id: 'boton-agua'},
-    { nombre: '💧', id: 'boton-agua'},
+dragon.ataques.push (...DRAGON_ATAQUES)
+
+const TIBURON_ATAQUES = [
+    { nombre: '🌱', id: 'boton-tierra'},
+    { nombre: '🌱', id: 'boton-tierra'},
+    { nombre: '🌱', id: 'boton-tierra'},
     { nombre: '💧', id: 'boton-agua'},
     { nombre: '🔥', id: 'boton-fuego'},
-    { nombre: '🌱', id: 'boton-tierra'},
-    
-)
+]
 
-tiburon.ataques.push (
-    { nombre: '🌱', id: 'boton-tierra'},
-    { nombre: '🌱', id: 'boton-tierra'},
-    { nombre: '🌱', id: 'boton-tierra'},
-    { nombre: '💧', id: 'boton-agua'},
-    { nombre: '🔥', id: 'boton-fuego'},                        
-)      
+tiburon.ataques.push (...TIBURON_ATAQUES)
 
-tiburonEnemigo.ataques.push (
-    { nombre: '🌱', id: 'boton-tierra'},
-    { nombre: '🌱', id: 'boton-tierra'},
-    { nombre: '🌱', id: 'boton-tierra'},
+const BURRO_ATAQUES = [
+    { nombre: '🔥', id: 'boton-fuego'},
+    { nombre: '🔥', id: 'boton-fuego'},
+    { nombre: '🔥', id: 'boton-fuego'},
     { nombre: '💧', id: 'boton-agua'},
-    { nombre: '🔥', id: 'boton-fuego'},                        
-)           
+    { nombre: '🌱', id: 'boton-tierra'},
+]
                       
-burro.ataques.push (
-    { nombre: '🔥', id: 'boton-fuego'},
-    { nombre: '🔥', id: 'boton-fuego'},
-    { nombre: '🔥', id: 'boton-fuego'},
-    { nombre: '💧', id: 'boton-agua'},
-    { nombre: '🌱', id: 'boton-tierra'},
-) 
-
-burroEnemigo.ataques.push (
-    { nombre: '🔥', id: 'boton-fuego'},
-    { nombre: '🔥', id: 'boton-fuego'},
-    { nombre: '🔥', id: 'boton-fuego'},
-    { nombre: '💧', id: 'boton-agua'},
-    { nombre: '🌱', id: 'boton-tierra'},
-)
+burro.ataques.push (...BURRO_ATAQUES) 
 
 mokepones.push(dragon,tiburon,burro)
 
@@ -400,7 +375,10 @@ function pintarCanvas() {
         mapa.width,
         mapa.height
     )
-    mascotaJugadorObjeto.pintarMokepon() 
+    mascotaJugadorObjeto.pintarMokepon()
+    
+    enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
+
     dragonEnemigo.pintarMokepon()
     burroEnemigo.pintarMokepon()
     tiburonEnemigo.pintarMokepon()
@@ -409,6 +387,43 @@ function pintarCanvas() {
         revisarColision(burroEnemigo)
         revisarColision(tiburonEnemigo)
     }
+}
+
+function enviarPosicion(x, y) {
+    fetch(`http://localhost:8080/mokepon/${jugadorId}/posicion`, {
+    method: "post",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        x,
+        y
+    })
+})
+.then(function (res) {
+    if (res.ok) {
+        res.json()
+            .then(function ({ enemigos }) {
+                console.log(enemigos)
+                enemigos.forEach(function (enemigo) {
+                    let mokeponEnemigo = null
+                    const mokeponNombre = enemigo.mokepon.nombre || ""
+                    if (mokeponNombre === "dragon") {
+                        mokeponEnemigo = new Mokepon('dragon', './imagenes/dragon.jpg', 5, './imagenes/lobo.png')        
+                    } else if (mokeponNombre === "tiburon") {
+                        mokeponEnemigo = new Mokepon('tiburon', './imagenes/tiburon.jpg', 5, './imagenes/perro.jpg')
+                    } else if (mokeponNombre === "burro") {
+                        mokeponEnemigo = new Mokepon('burro', './imagenes/burro.jpg', 5, './imagenes/conejo.jpg')
+                    }
+
+                    mokeponEnemigo.x = enemigo.x
+                    mokeponEnemigo.y = enemigo.y
+
+                    mokeponEnemigo.pintarMokepon()
+                })
+            })
+    }
+})
 }
 
 function moverDerecha() {
