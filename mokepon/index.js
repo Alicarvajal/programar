@@ -17,9 +17,12 @@ actualizarPosicion(x, y) {
     this.y = y
 }
 
+<<<<<<< HEAD
 asignarAtaques(ataques) {
     this.ataques = ataques
 }
+=======
+>>>>>>> 13af7540e06f2aa4cd268e6201ff3625aae826c6
 }
 
 class Mokepon{constructor(nombre){this.nombre=nombre}}
@@ -61,6 +64,7 @@ res.send({
 }
 
 )
+<<<<<<< HEAD
 })
 
 app.post("/mokepon/:jugadorId/ataques", (req,res) => {
@@ -81,6 +85,9 @@ app.get("/mokepon/:jugadorId/ataques", (req,res) => {
         ataques: jugador.ataques || []
     })
 })
+=======
+} )
+>>>>>>> 13af7540e06f2aa4cd268e6201ff3625aae826c6
 
 app.listen(8080,()=>{console.log("Servidor funcionando")
 })
