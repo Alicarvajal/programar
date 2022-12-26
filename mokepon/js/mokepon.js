@@ -406,7 +406,6 @@ function pintarCanvas() {
     
     enviarPosicion(mascotaJugadorObjeto.x, mascotaJugadorObjeto.y)
 
-<<<<<<< HEAD
     mokeponesEnemigos.forEach(function (mokepon) {
         mokepon.pintarMokepon()
         revisarColision(mokepon)
@@ -448,53 +447,6 @@ function enviarPosicion(x, y) {
                 })
         }
     })
-=======
-    dragonEnemigo.pintarMokepon()
-    burroEnemigo.pintarMokepon()
-    tiburonEnemigo.pintarMokepon()
-    if (mascotaJugadorObjeto.velocidadX !== 0 || mascotaJugadorObjeto.velocidadY !== 0) {
-        revisarColision(dragonEnemigo)
-        revisarColision(burroEnemigo)
-        revisarColision(tiburonEnemigo)
-    }
->>>>>>> 13af7540e06f2aa4cd268e6201ff3625aae826c6
-}
-
-function enviarPosicion(x, y) {
-    fetch(`http://localhost:8080/mokepon/${jugadorId}/posicion`, {
-    method: "post",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        x,
-        y
-    })
-})
-.then(function (res) {
-    if (res.ok) {
-        res.json()
-            .then(function ({ enemigos }) {
-                console.log(enemigos)
-                enemigos.forEach(function (enemigo) {
-                    let mokeponEnemigo = null
-                    const mokeponNombre = enemigo.mokepon.nombre || ""
-                    if (mokeponNombre === "dragon") {
-                        mokeponEnemigo = new Mokepon('dragon', './imagenes/dragon.jpg', 5, './imagenes/lobo.png')        
-                    } else if (mokeponNombre === "tiburon") {
-                        mokeponEnemigo = new Mokepon('tiburon', './imagenes/tiburon.jpg', 5, './imagenes/perro.jpg')
-                    } else if (mokeponNombre === "burro") {
-                        mokeponEnemigo = new Mokepon('burro', './imagenes/burro.jpg', 5, './imagenes/conejo.jpg')
-                    }
-
-                    mokeponEnemigo.x = enemigo.x
-                    mokeponEnemigo.y = enemigo.y
-
-                    mokeponEnemigo.pintarMokepon()
-                })
-            })
-    }
-})
 }
 
 function moverDerecha() {
